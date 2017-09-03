@@ -1,32 +1,39 @@
-<?php include('form_process.php'); ?>
-<link rel="stylesheet" href="form.css" type="text/css">
-<div class="container">  
-  <form id="contact" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
-    <h3>Contact</h3>
-    <h4>Contact us today, and get reply with in 24 hours!</h4>
-    <fieldset>
-      <input placeholder="Your name" type="text" name="name" value="<?= $name ?>" tabindex="1" autofocus>
-      <span class="error"><?= $name_error ?></span>
-    </fieldset>
-    <fieldset>
-      <input placeholder="Your Email Address" type="text" name="email" value="<?= $email ?>" tabindex="2">
-      <span class="error"><?= $email_error ?></span>
-    </fieldset>
-    <fieldset>
-      <input placeholder="Your Phone Number" type="text" name="phone" value="<?= $phone ?>" tabindex="3">
-      <span class="error"><?= $phone_error ?></span>
-    </fieldset>
-    <fieldset>
-      <input placeholder="Your Web Site starts with http://" type="text" name="url" value="<?= $url ?>" tabindex="4" >
-      <span class="error"><?= $url_error ?></span>
-    </fieldset>
-    <fieldset>
-      <textarea value="<?= $message ?>" name="message" tabindex="5">
-      </textarea>
-    </fieldset>
-    <fieldset>
-      <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
-    </fieldset>
-    <div class="success"><?= $success ?></div>
-  </form>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Website Contact Form</title>
+<script>
+function _(id){ return document.getElementById(id); }
+function submitForm(){
+	_("mybtn").disabled = true;
+	_("status").innerHTML = 'please wait ...';
+	var formdata = new FormData();
+	formdata.append( "n", _("n").value );
+	formdata.append( "e", _("e").value );
+	formdata.append( "m", _("m").value );
+	var ajax = new XMLHttpRequest();
+	ajax.open( "POST", "example_parser.php" );
+	ajax.onreadystatechange = function() {
+		if(ajax.readyState == 4 && ajax.status == 200) {
+			if(ajax.responseText == "success"){
+				_("my_form").innerHTML = '<h2>Thanks '+_("n").value+', your message has been sent.</h2>';
+			} else {
+				_("status").innerHTML = ajax.responseText;
+				_("mybtn").disabled = false;
+			}
+		}
+	}
+	ajax.send( formdata );
+}
+</script>
+</head>
+<body>
+<form id="my_form" onsubmit="submitForm(); return false;">
+  <p><input id="n" placeholder="Name" required></p>
+  <p><input id="e" placeholder="Email Address" type="email" required></p>
+  <textarea id="m" placeholder="write your message here" rows="10" required></textarea>
+  <p><input id="mybtn" type="submit" value="Submit Form"> <span id="status"></span></p>
+</form>
+</body>
+</html>
